@@ -4,8 +4,9 @@ from .models import Post
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from .forms import UserProfileForm, ProfileForm
+from .forms import UserProfileForm, ProfileForm, SignUpForm
 from .models import Profile
+from django.contrib.auth import login
 
 # Vista para listar los posts
 class PostListView(ListView):
@@ -89,3 +90,14 @@ def edit_profile(request):
 
 def home_view(request):
     return render(request, 'blog/home.html', {'mensaje': 'Bienvenido!'})
+
+def signup_view(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)  # Inicia sesión automáticamente después del registro
+            return redirect('home')  # Cambia por la URL de inicio
+    else:
+        form = SignUpForm()
+    return render(request, 'registration/signup.html', {'form': form})

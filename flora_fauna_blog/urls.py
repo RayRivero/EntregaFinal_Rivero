@@ -27,4 +27,5 @@ urlpatterns = [
     path('profile/', ProfileView.as_view(), name='profile'),
     path('', include('blog.urls')),  # Las URLs de la app blog
     path('edit-profile/', views.edit_profile, name='edit_profile'),
+    path('accounts/', include('django.contrib.auth.urls')),
 ]
