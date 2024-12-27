@@ -101,3 +101,9 @@ def signup_view(request):
     else:
         form = SignUpForm()
     return render(request, 'registration/signup.html', {'form': form})
+
+def about_us_view(request):
+    return render(request, 'blog/about_us.html')
+
+def temas_view(request):
+    return render(request, 'blog/temas.html')
