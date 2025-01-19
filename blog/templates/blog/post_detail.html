@@ -1,16 +1,9 @@
-<!DOCTYPE html>
-<html>
+{% extends 'blog/base.html' %}
 
-<head>
-    <title>{{ post.title }}</title>
-</head>
-
-<body>
-    <h1>{{ post.title }}</h1>
-    <p>{{ post.content }}</p>
-    <a href="{% url 'post_edit' post.pk %}">Edit</a>
-    <a href="{% url 'post_delete' post.pk %}">Delete</a>
-    <a href="{% url 'post_list' %}">Back to post list</a>
-</body>
-
-</html>
+{% block content %}
+<h1>{{ post.title }}</h1>
+<p>{{ post.content }}</p>
+<a href="{% url 'post_edit' post.pk %}">Edit</a>
+<a href="{% url 'post_delete' post.pk %}">Delete</a>
+<a href="{% url 'post_list' %}">Back to post list</a>
+{% endblock %}
