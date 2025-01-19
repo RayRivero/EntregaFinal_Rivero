@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from .models import Post
 from django.urls import reverse_lazy
@@ -31,10 +31,10 @@ class PostUpdateView(LoginRequiredMixin, UpdateView):
     model = Post
     template_name = 'blog/post_form.html'
     fields = ['title', 'content', 'image']
-
-    def get_queryset(self):
-        # Filtrar posts por el usuario actual
-        return Post.objects.filter(author=self.request.user)
+    
+    def get_object(self, queryset=None):
+        # Obtener el post solo si el usuario es el autor
+        return get_object_or_404(Post, pk=self.kwargs['pk'], author=self.request.user)
 
 # Vista para eliminar un post
 class PostDeleteView(LoginRequiredMixin, DeleteView):
