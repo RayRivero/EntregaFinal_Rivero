@@ -21,22 +21,30 @@ class PostDetailView(DetailView):
     context_object_name = 'post'
 
 # Vista para crear un nuevo post
-class PostCreateView(CreateView):
+class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
     template_name = 'blog/post_form.html'
     fields = ['title', 'content']
 
 # Vista para editar un post
-class PostUpdateView(UpdateView):
+class PostUpdateView(LoginRequiredMixin, UpdateView):
     model = Post
     template_name = 'blog/post_form.html'
     fields = ['title', 'content']
 
+    def get_queryset(self):
+        # Filtrar posts por el usuario actual
+        return Post.objects.filter(author=self.request.user)
+
 # Vista para eliminar un post
-class PostDeleteView(DeleteView):
+class PostDeleteView(LoginRequiredMixin, DeleteView):
     model = Post
     template_name = 'blog/post_confirm_delete.html'
     success_url = reverse_lazy('post_list')
+
+    def get_queryset(self):
+        # Filtrar posts por el usuario actual
+        return Post.objects.filter(author=self.request.user)
 
 # Vista basada en clases para el perfil
 class ProfileView(LoginRequiredMixin, TemplateView):
