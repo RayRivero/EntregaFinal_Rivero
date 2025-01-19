@@ -79,6 +79,7 @@
         {% if user.is_authenticated %}
         <!-- Si el usuario está logueado, mostramos el enlace a "Perfil" -->
         <a href="{% url 'profile' %}">Perfil</a>
+        <a href="{% url 'logout' %}">Cerrar sesión</a>
         {% else %}
         <!-- Si el usuario no está logueado, mostramos el enlace a "Login" -->
         <a href="{% url 'login' %}">Login</a>

@@ -2,6 +2,7 @@ from django.urls import path
 from django.views.generic import RedirectView
 from . import views
 from .views import PostDetailView, PostCreateView, PostUpdateView, PostDeleteView, PostListView
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('', views.home_view, name='home'),
@@ -14,4 +15,5 @@ urlpatterns = [
     path('posts/', PostListView.as_view(), name='post_list'),
     path('about-us/', views.about_us_view, name='about_us'),
     path('temas/', views.temas_view, name='temas'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 ]
