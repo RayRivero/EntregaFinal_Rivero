@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import UserProfileForm, ProfileForm, SignUpForm
 from .models import Profile
 from django.contrib.auth import login
+from django.http import Http404
 
 # Vista para listar los posts
 class PostListView(ListView):
@@ -25,6 +26,10 @@ class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
     template_name = 'blog/post_form.html'
     fields = ['title', 'content', 'image']
+    def form_valid(self, form):
+        # Asignar el autor al usuario logueado
+        form.instance.author = self.request.user
+        return super().form_valid(form)
 
 # Vista para editar un post
 class PostUpdateView(LoginRequiredMixin, UpdateView):
@@ -33,8 +38,10 @@ class PostUpdateView(LoginRequiredMixin, UpdateView):
     fields = ['title', 'content', 'image']
     
     def get_object(self, queryset=None):
-        # Obtener el post solo si el usuario es el autor
-        return get_object_or_404(Post, pk=self.kwargs['pk'], author=self.request.user)
+        post = get_object_or_404(Post, pk=self.kwargs['pk'])
+        if post.author != self.request.user:
+            raise Http404("You are not the author of this post.")
+        return post
 
 # Vista para eliminar un post
 class PostDeleteView(LoginRequiredMixin, DeleteView):
