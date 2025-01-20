@@ -71,15 +71,23 @@ def profile_view(request):
 @login_required
 def update_profile(request):
     profile = request.user.profile
+    user = request.user
     if request.method == 'POST':
-        form = ProfileForm(request.POST, request.FILES, instance=profile)
-        if form.is_valid():
-            form.save()
+        # Formulario para actualizar avatar y datos de usuario
+        profile_form = ProfileForm(request.POST, request.FILES, instance=profile)
+        user_form = UserProfileForm(request.POST, instance=user)
+
+        # Validar ambos formularios
+        if profile_form.is_valid() and user_form.is_valid():
+            profile_form.save()
+            user_form.save()
             return redirect('profile')  # Redirige al perfil actualizado
     else:
-        form = ProfileForm(instance=profile)
+        # Crear los formularios para mostrar en la página
+        profile_form = ProfileForm(instance=profile)
+        user_form = UserProfileForm(instance=user)
     
-    return render(request, 'update_profile.html', {'form': form})
+    return render(request, 'update_profile.html', {'profile_form': profile_form, 'user_form': user_form})
 
 @login_required
 def edit_profile(request):

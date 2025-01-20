@@ -2,9 +2,16 @@
 
 {% block content %}
 <h2>Actualizar Perfil</h2>
+
 <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
-    {{ form.as_p }}
+
+    <h3>Actualizar foto de perfil</h3>
+    {{ profile_form.as_p }}
+
+    <h3>Actualizar datos de usuario</h3>
+    {{ user_form.as_p }}
+
     <button type="submit">Actualizar</button>
 </form>
 {% endblock %}
