@@ -14,4 +14,11 @@
 
     <button type="submit">Actualizar</button>
 </form>
+
+<h3>Foto de perfil actual:</h3>
+{% if avatar_form.instance.avatar %}
+<img src="{{ avatar_form.instance.avatar.url }}" alt="Avatar" width="100">
+{% else %}
+<p>No hay avatar disponible.</p>
+{% endif %}
 {% endblock %}

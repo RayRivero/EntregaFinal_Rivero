@@ -56,14 +56,11 @@ class PostDeleteView(LoginRequiredMixin, DeleteView):
 @login_required
 def profile_view(request):
     user = request.user
-    profile = user.profile  # Obtiene el perfil relacionado al usuario
     try:
         avatar = Avatar.objects.get(user=user)
-        print(f"Avatar URL: {avatar.avatar.url}")  # Depuración
     except Avatar.DoesNotExist:
         avatar = None
-        print("No avatar found")  # Depuración
-    return render(request, 'profile.html', {'user': user, 'profile': profile, 'avatar': avatar})
+    return render(request, 'profile.html', {'user': user, 'avatar': avatar})
 
 
 
@@ -89,18 +86,16 @@ def update_profile(request):
         # Formularios para actualizar avatar y datos de usuario
         profile_form = ProfileForm(request.POST, request.FILES, instance=user.profile)
         user_form = UserProfileForm(request.POST, instance=user)
+        avatar_form = AvatarForm(request.POST, request.FILES, instance=avatar)
 
-        # Validar ambos formularios
-        if profile_form.is_valid() and user_form.is_valid():
+        # Validar todos los formularios
+        if profile_form.is_valid() and user_form.is_valid() and avatar_form.is_valid():
             profile_form.save()
             user_form.save()
+            avatar_form.save()
 
-            # Formulario para actualizar el avatar
-            avatar_form = AvatarForm(request.POST, request.FILES, instance=avatar)
-            if avatar_form.is_valid():
-                avatar_form.save()
-
-            return redirect('profile')  # Redirige al perfil actualizado
+            # Redirige al perfil actualizado
+            return redirect('profile')
     else:
         # Crear los formularios para mostrar en la página
         profile_form = ProfileForm(instance=user.profile)
@@ -112,6 +107,7 @@ def update_profile(request):
         'user_form': user_form,
         'avatar_form': avatar_form
     })
+
 
 @login_required
 def edit_profile(request):

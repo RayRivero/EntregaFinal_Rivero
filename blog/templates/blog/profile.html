@@ -8,10 +8,10 @@
 <p>Fecha de registro: {{ user.date_joined }}</p>
 <p>Última vez activo: {{ user.last_login }}</p>
 
-{% if avatar %}
+{% if avatar and avatar.avatar %}
 <img src="{{ avatar.avatar.url }}" alt="Avatar" width="100">
 {% else %}
-<p>No hay foto de perfil disponible.</p>
+<p>No hay avatar disponible.</p>
 {% endif %}
 
 <a href="{% url 'update_profile' %}" class="btn btn-primary">Actualizar Perfil</a>

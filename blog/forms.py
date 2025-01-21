@@ -11,7 +11,7 @@ class AvatarForm(forms.ModelForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['avatar']  # Solo el campo de avatar
+        fields = ['bio']
 
 class UserProfileForm(forms.ModelForm):
     class Meta:
