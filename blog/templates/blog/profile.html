@@ -8,8 +8,8 @@
 <p>Fecha de registro: {{ user.date_joined }}</p>
 <p>Última vez activo: {{ user.last_login }}</p>
 
-{% if profile.avatar %}
-<img src="{{ profile.avatar.url }}" alt="Avatar" width="100">
+{% if avatar %}
+<img src="{{ avatar.avatar.url }}" alt="Avatar" width="100">
 {% else %}
 <p>No hay foto de perfil disponible.</p>
 {% endif %}

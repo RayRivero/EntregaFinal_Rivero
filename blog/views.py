@@ -4,8 +4,8 @@ from .models import Post
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from .forms import UserProfileForm, ProfileForm, SignUpForm
-from .models import Profile
+from .forms import UserProfileForm, ProfileForm, SignUpForm, AvatarForm
+from .models import Profile, Avatar
 from django.contrib.auth import login
 from django.http import Http404
 
@@ -53,6 +53,20 @@ class PostDeleteView(LoginRequiredMixin, DeleteView):
         # Filtrar posts por el usuario actual
         return Post.objects.filter(author=self.request.user)
 
+@login_required
+def profile_view(request):
+    user = request.user
+    profile = user.profile  # Obtiene el perfil relacionado al usuario
+    try:
+        avatar = Avatar.objects.get(user=user)
+        print(f"Avatar URL: {avatar.avatar.url}")  # Depuración
+    except Avatar.DoesNotExist:
+        avatar = None
+        print("No avatar found")  # Depuración
+    return render(request, 'profile.html', {'user': user, 'profile': profile, 'avatar': avatar})
+
+
+
 # Vista basada en clases para el perfil
 class ProfileView(LoginRequiredMixin, TemplateView):
     template_name = 'blog/profile.html'
@@ -62,32 +76,42 @@ class ProfileView(LoginRequiredMixin, TemplateView):
         context['user'] = self.request.user  # Pasamos el usuario al template
         return context
     
-@login_required
-def profile_view(request):
-    user = request.user
-    profile = user.profile  # Obtiene el perfil relacionado al usuario
-    return render(request, 'profile.html', {'user': user, 'profile': profile})
+
 
 @login_required
 def update_profile(request):
-    profile = request.user.profile
     user = request.user
+
+    # Asegúrate de que el usuario tenga un objeto Avatar
+    avatar, created = Avatar.objects.get_or_create(user=user)
+
     if request.method == 'POST':
-        # Formulario para actualizar avatar y datos de usuario
-        profile_form = ProfileForm(request.POST, request.FILES, instance=profile)
+        # Formularios para actualizar avatar y datos de usuario
+        profile_form = ProfileForm(request.POST, request.FILES, instance=user.profile)
         user_form = UserProfileForm(request.POST, instance=user)
 
         # Validar ambos formularios
         if profile_form.is_valid() and user_form.is_valid():
             profile_form.save()
             user_form.save()
+
+            # Formulario para actualizar el avatar
+            avatar_form = AvatarForm(request.POST, request.FILES, instance=avatar)
+            if avatar_form.is_valid():
+                avatar_form.save()
+
             return redirect('profile')  # Redirige al perfil actualizado
     else:
         # Crear los formularios para mostrar en la página
-        profile_form = ProfileForm(instance=profile)
+        profile_form = ProfileForm(instance=user.profile)
         user_form = UserProfileForm(instance=user)
-    
-    return render(request, 'update_profile.html', {'profile_form': profile_form, 'user_form': user_form})
+        avatar_form = AvatarForm(instance=avatar)
+
+    return render(request, 'update_profile.html', {
+        'profile_form': profile_form,
+        'user_form': user_form,
+        'avatar_form': avatar_form
+    })
 
 @login_required
 def edit_profile(request):
